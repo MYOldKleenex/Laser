@@ -16,6 +16,11 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    canvas {
+      margin-top: 20px;
+      border: 2px solid white;
+      background: #222;
+    }
   </style>
 </head>
 <body>
@@ -43,46 +48,46 @@
       document.getElementById("bgMusic").play().catch(() => {});
       document.getElementById("startButton").style.display = "none";
 
-      const gameSection = document.createElement("div");
-      gameSection.innerHTML = `
-<canvas id="gameCanvas" width="400" height="400" style="background:#222; border:2px solid white;"></canvas>
-<script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-let robot = { x: 2, y: 2 };
-const gridSize = 8;
-const cellSize = 50;
+      // Insert canvas
+      const canvas = document.createElement("canvas");
+      canvas.id = "gameCanvas";
+      canvas.width = 400;
+      canvas.height = 400;
+      document.body.appendChild(canvas);
 
-function drawGrid() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let y = 0; y < gridSize; y++) {
-        for (let x = 0; x < gridSize; x++) {
+      // Define and execute game logic
+      const ctx = canvas.getContext("2d");
+      let robot = { x: 2, y: 2 };
+      const gridSize = 8;
+      const cellSize = 50;
+
+      function drawGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let y = 0; y < gridSize; y++) {
+          for (let x = 0; x < gridSize; x++) {
             ctx.strokeStyle = "#555";
             ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+          }
         }
-    }
-    ctx.fillStyle = "cyan";
-    ctx.fillRect(robot.x * cellSize + 10, robot.y * cellSize + 10, 30, 30);
-}
+        ctx.fillStyle = "cyan";
+        ctx.fillRect(robot.x * cellSize + 10, robot.y * cellSize + 10, 30, 30);
+      }
 
-function moveRobot(dx, dy) {
-    robot.x = Math.max(0, Math.min(gridSize - 1, robot.x + dx));
-    robot.y = Math.max(0, Math.min(gridSize - 1, robot.y + dy));
-    document.getElementById("moveSound").play();
-    drawGrid();
-}
+      function moveRobot(dx, dy) {
+        robot.x = Math.max(0, Math.min(gridSize - 1, robot.x + dx));
+        robot.y = Math.max(0, Math.min(gridSize - 1, robot.y + dy));
+        document.getElementById("moveSound").play();
+        drawGrid();
+      }
 
-document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowUp") moveRobot(0, -1);
-    if (e.key === "ArrowDown") moveRobot(0, 1);
-    if (e.key === "ArrowLeft") moveRobot(-1, 0);
-    if (e.key === "ArrowRight") moveRobot(1, 0);
-});
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowUp") moveRobot(0, -1);
+        if (e.key === "ArrowDown") moveRobot(0, 1);
+        if (e.key === "ArrowLeft") moveRobot(-1, 0);
+        if (e.key === "ArrowRight") moveRobot(1, 0);
+      });
 
-drawGrid();
-</script>
-`;
-      document.body.appendChild(gameSection);
+      drawGrid();
     });
   </script>
 </body>
