@@ -3,32 +3,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Laser Labyrinth - 5 Level Demo</title>
+  <title>Laser Labyrinth - 25 Levels</title>
   <style>
-    body { background: #111; color: white; font-family: sans-serif; margin: 0; }
-    header { background: #222; padding: 10px; display: flex; justify-content: space-between; }
-    canvas { display: block; margin: 20px auto; border: 2px solid white; background: #000; }
+    body { margin: 0; font-family: sans-serif; background: #111; color: white; }
+    header { padding: 10px; background: #222; text-align: center; font-size: 18px; }
+    canvas { display: block; margin: 20px auto; background: #000; border: 2px solid #fff; }
     #modal {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85); color: white;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center;
-      z-index: 10;
+      background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+      justify-content: center; align-items: center; z-index: 10;
     }
     #modal button {
-      margin-top: 20px; padding: 10px 20px;
-      font-size: 16px; background: #00ccff;
-      border: none; color: black; border-radius: 5px;
+      padding: 10px 20px; margin-top: 20px;
+      font-size: 16px; background: #00ccff; border: none;
+      border-radius: 5px; color: black;
     }
   </style>
 </head>
 <body>
-  <header><h1 id="levelTitle">Laser Labyrinth</h1></header>
+  <header id="header">Laser Labyrinth - Level 1</header>
   <canvas id="game" width="400" height="400"></canvas>
 
   <div id="modal">
     <h2 id="modalTitle">Level 1</h2>
-    <p id="modalObjective">Hit the yellow target with your laser.</p>
+    <p id="modalObjective">Your goal will appear here.</p>
     <button id="startBtn">Start</button>
   </div>
 
@@ -39,24 +37,21 @@
     const startBtn = document.getElementById("startBtn");
     const modalTitle = document.getElementById("modalTitle");
     const modalObjective = document.getElementById("modalObjective");
-    const levelTitle = document.getElementById("levelTitle");
+    const header = document.getElementById("header");
 
-    let gameActive = false;
-    let currentLevel = 0;
+    const gridSize = 8, cellSize = 50;
+    let currentLevel = 0, gameActive = false;
 
-    const cellSize = 50;
-    const gridSize = 8;
+    let player = { x: 0, y: 0 };
+    let target = { x: 7, y: 7 };
 
-    const levels = [
-      { start: { x: 1, y: 1 }, target: { x: 6, y: 1 }, objective: "Hit the yellow target." },
-      { start: { x: 0, y: 7 }, target: { x: 7, y: 0 }, objective: "Reach the far corner." },
-      { start: { x: 3, y: 3 }, target: { x: 5, y: 5 }, objective: "Get to the bottom right." },
-      { start: { x: 7, y: 7 }, target: { x: 0, y: 0 }, objective: "Reach the opposite edge." },
-      { start: { x: 2, y: 6 }, target: { x: 2, y: 0 }, objective: "Climb the vertical path." }
-    ];
-
-    let player = { x: 1, y: 1 };
-    let target = { x: 6, y: 1 };
+    const levels = Array.from({ length: 25 }, (_, i) => {
+      return {
+        start: { x: i % gridSize, y: Math.floor(i / gridSize) % gridSize },
+        target: { x: (7 - (i % gridSize)), y: (7 - (Math.floor(i / gridSize) % gridSize)) },
+        objective: `Reach the yellow target without hitting the edge.`
+      };
+    });
 
     function drawGrid() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -66,30 +61,28 @@
           ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
         }
       }
-    }
 
-    function drawGame() {
-      drawGrid();
+      // Draw player
       ctx.fillStyle = "cyan";
       ctx.fillRect(player.x * cellSize + 10, player.y * cellSize + 10, 30, 30);
 
+      // Draw target
       ctx.fillStyle = "yellow";
       ctx.beginPath();
       ctx.arc(target.x * cellSize + 25, target.y * cellSize + 25, 10, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    function startLevel(index) {
-      currentLevel = index;
-      const lvl = levels[index];
-      player = { ...lvl.start };
-      target = { ...lvl.target };
-      gameActive = false;
-      modalTitle.textContent = "Level " + (index + 1);
-      modalObjective.textContent = lvl.objective;
-      levelTitle.textContent = "Laser Labyrinth - Level " + (index + 1);
-      modal.style.display = "flex";
-      drawGame();
+    function move(dx, dy) {
+      if (!gameActive) return;
+      const nx = player.x + dx;
+      const ny = player.y + dy;
+      if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
+        player.x = nx;
+        player.y = ny;
+        drawGrid();
+        checkWin();
+      }
     }
 
     function checkWin() {
@@ -99,38 +92,38 @@
           if (currentLevel < levels.length - 1) {
             startLevel(currentLevel + 1);
           } else {
-            alert("You beat all 5 levels!");
+            alert("You completed all 25 levels!");
           }
-        }, 200);
+        }, 300);
       }
     }
 
-    function movePlayer(dx, dy) {
-      if (!gameActive) return;
-      const nx = player.x + dx;
-      const ny = player.y + dy;
-      if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
-        player.x = nx;
-        player.y = ny;
-        drawGame();
-        checkWin();
-      }
+    function startLevel(index) {
+      currentLevel = index;
+      const level = levels[index];
+      player = { ...level.start };
+      target = { ...level.target };
+      header.textContent = `Laser Labyrinth - Level ${index + 1}`;
+      modalTitle.textContent = `Level ${index + 1}`;
+      modalObjective.textContent = level.objective;
+      modal.style.display = "flex";
+      gameActive = false;
+      drawGrid();
     }
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "ArrowUp") movePlayer(0, -1);
-      if (e.key === "ArrowDown") movePlayer(0, 1);
-      if (e.key === "ArrowLeft") movePlayer(-1, 0);
-      if (e.key === "ArrowRight") movePlayer(1, 0);
-    });
 
     startBtn.onclick = () => {
       modal.style.display = "none";
       gameActive = true;
-      drawGame();
+      drawGrid();
     };
 
-    // Start first level
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp") move(0, -1);
+      if (e.key === "ArrowDown") move(0, 1);
+      if (e.key === "ArrowLeft") move(-1, 0);
+      if (e.key === "ArrowRight") move(1, 0);
+    });
+
     startLevel(0);
   </script>
 </body>
