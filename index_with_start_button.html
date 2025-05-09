@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Laser Labyrinth</title>
+  <style>
+    body { background: #111; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
+    button#startButton {
+      font-size: 20px;
+      padding: 15px 30px;
+      margin-top: 20px;
+      background: #00ccff;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Laser Labyrinth</h1>
+  <p>Click Start to enable sound and begin the game</p>
+  <button id="startButton">Start Game</button>
+
+  <!-- Real audio sources from Pixabay CDN -->
+  <audio id="bgMusic" src="https://cdn.pixabay.com/audio/2022/03/11/audio_a050cfca3b.mp3" loop preload="auto"></audio>
+  <audio id="moveSound" src="https://cdn.pixabay.com/audio/2023/03/28/audio_1d7eec7fd3.mp3" preload="auto"></audio>
+  <audio id="laserSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_1044b7a8cb.mp3" preload="auto"></audio>
+  <audio id="hitSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_456d8799c0.mp3" preload="auto"></audio>
+  <audio id="levelCompleteSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_2e9372e416.mp3" preload="auto"></audio>
+
+  <script>
+    document.getElementById("startButton").addEventListener("click", () => {
+      const audioIds = ["bgMusic", "moveSound", "laserSound", "hitSound", "levelCompleteSound"];
+      audioIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.muted = false;
+          el.play().catch(() => {});
+          el.pause(); el.currentTime = 0;
+        }
+      });
+      document.getElementById("bgMusic").play().catch(() => {});
+      document.getElementById("startButton").style.display = "none";
+    });
+  </script>
+</body>
+</html>
