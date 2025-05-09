@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laser Labyrinth</title>
+</head>
+<body>
+  <h1>Laser Labyrinth</h1>
+  <p>Click anywhere to enable audio</p>
+
+  <audio id="bgMusic" src="sounds/music.mp3" loop></audio>
+  <audio id="moveSound" src="sounds/move.mp3"></audio>
+  <audio id="laserSound" src="sounds/laser.mp3"></audio>
+  <audio id="hitSound" src="sounds/hit.mp3"></audio>
+  <audio id="levelCompleteSound" src="sounds/complete.mp3"></audio>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const bgMusic = document.getElementById("bgMusic");
+      const move = document.getElementById("moveSound");
+      const laser = document.getElementById("laserSound");
+      const hit = document.getElementById("hitSound");
+      const complete = document.getElementById("levelCompleteSound");
+
+      document.body.addEventListener("click", () => {
+        bgMusic.play().catch(() => {});
+        move.play().catch(() => {}); move.pause(); move.currentTime = 0;
+        laser.play().catch(() => {}); laser.pause(); laser.currentTime = 0;
+        hit.play().catch(() => {}); hit.pause(); hit.currentTime = 0;
+        complete.play().catch(() => {}); complete.pause(); complete.currentTime = 0;
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>
